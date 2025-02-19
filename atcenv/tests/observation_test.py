@@ -1,7 +1,7 @@
-from atcenv.src.environment_objects.observation.observation import Local
-from atcenv.src.environment_objects.airspace import EnrouteAirspace
-from atcenv.src.environment_objects.flight import Aircraft
-from atcenv.src.environment_objects.flight import Flight
+from atcenv_gym.atcenv.src.environment_objects.observation.observation import Local
+from atcenv_gym.atcenv.src.environment_objects.airspace import EnrouteAirspace
+from atcenv_gym.atcenv.src.environment_objects.flight import Aircraft
+from atcenv_gym.atcenv.src.environment_objects.flight import Flight
 
 num_ac = 2
 
@@ -17,6 +17,6 @@ obs = observation.get_observation(flights)
 print(f"flight 0 info, x: {flights[0].position.x}, y: {flights[0].position.y}, track: {flights[0].track}")
 print(f"flight 1 info, x: {flights[1].position.x}, y: {flights[1].position.y}, track: {flights[1].track}")
 
-print(obs)
+#print(obs)
 
 

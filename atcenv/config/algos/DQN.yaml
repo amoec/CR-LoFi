@@ -1,0 +1,57 @@
+experiment_name: "LoFi-DQN"
+environment:
+  class_path: atcenv.src.environment_objects.environment.DefaultEnvironment
+  init_args:
+    render_frequency: 0
+model:
+  policy: 
+    type: "MultiInputPolicy"
+  init_args:
+    learning_rate: 3e-4
+    buffer_size: 20000000
+    learning_starts: 0
+    batch_size: 2048
+    tau: 5e-3
+    gamma: 1.0
+    train_freq: 8
+    exploration_fraction: 0.1
+    exploration_initial_eps: 1.0
+    exploration_final_eps: 0.01
+    verbose: 1
+    device: "auto"
+scenario:
+  num_episodes: 200
+  num_agents: 1
+  num_flights: 0
+  num_ac_state: 4
+  airspace_area: [2400, 3750]
+  traffic_density: [0.005, 0.001]
+  test_scenario_dir: "hello"
+  num_test_episodes: 0
+  test_frequency: 0
+airspace:
+  class_path: atcenv.src.environment_objects.airspace.EnrouteAirspace
+aircraft:
+  min_speed: 200
+  max_speed: 250
+  min_distance: 9260
+observation:
+  class_path: atcenv.src.observation.observation.Local
+  init_args:
+    observation_size: 31
+    num_ac_state: 4
+    normalize_data: True
+    create_normalization_data: False
+    normalization_data_file: "local_normalization.p"
+    normalization_samples: 1000
+reward:
+  class_path: atcenv.src.reward.reward.DefaultReward
+  init_args:
+    intrusion_weight: -1
+    drift_weight: -0.1
+logger:
+  class_path: atcenv.src.logger.logger.RLLogger
+  init_args:
+    log_frequency: 1
+    verbose: True
+baseline: False

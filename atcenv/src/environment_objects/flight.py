@@ -3,9 +3,9 @@ from dataclasses import dataclass, field
 from typing import Tuple, Optional
 import math
 
-import atcenv.src.units as u
-import atcenv.src.functions as fn
-from atcenv.src.environment_objects.airspace import Airspace
+import atcenv_gym.atcenv.src.units as u
+import atcenv_gym.atcenv.src.functions as fn
+from atcenv_gym.atcenv.src.environment_objects.airspace import Airspace
 
 @dataclass
 class Aircraft:
@@ -40,6 +40,8 @@ class Flight:
     ___________
     aircraft: Aircraft
         Aircraft object that this flight belongs to
+    control: bool
+        whether the aircraft is under control of the agent
     position: shapely.geometry.Point
         current position of the aircraft in x and y, m
     target: shapely.geometry.Point
@@ -78,7 +80,7 @@ class Flight:
     """
 
     aircraft: Aircraft
-
+    control: bool
     position: Point
     target: Point
     optimal_airspeed: float
@@ -152,6 +154,7 @@ class Flight:
 
         position, target, optimal_airspeed, flight_type = airspace.random_flight(aircraft.min_speed, aircraft.max_speed, tol)
         return cls(aircraft = aircraft,
+                   control = False,
                    position = position, 
                    target = target,
                    optimal_airspeed = optimal_airspeed, 

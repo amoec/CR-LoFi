@@ -22,6 +22,8 @@ class ReplayBuffer:
         done: bool,
     ) -> Tuple[np.ndarray, np.ndarray, float, np.ndarray, bool]:
         """ Store transition """
+        # import code
+        # code.interact(local=locals())
         self.obs_buf[self.ptr] = obs
         self.acts_buf[self.ptr] = act
         self.rews_buf[self.ptr] = rew

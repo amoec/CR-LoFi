@@ -6,8 +6,8 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
-from atcenv.MASAC.buffer import ReplayBuffer
-from atcenv.MASAC.mactor_critic import Actor, CriticQ, CriticV
+from atcenv_gym.atcenv.MASAC.buffer import ReplayBuffer
+from atcenv_gym.atcenv.MASAC.mactor_critic import Actor, CriticQ, CriticV
 from torch.nn.utils.clip_grad import clip_grad_norm_
 
 

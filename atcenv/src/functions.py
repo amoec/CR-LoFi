@@ -66,11 +66,13 @@ def count_files_in_dir(directory: str) -> int:
             if os.path.isfile(item_path):
                 count += 1
     return count
+
 def check_dir_exist(directory: str, mkdir: Optional[bool] = False) -> bool:
     exist = os.path.exists(directory)
     if not exist and mkdir:
-        os.mkdir(directory)
+        os.makedirs(os.path.dirname(directory), exist_ok=True)
     return exist
+
 def remove_diagonal(matrix: np.ndarray) -> np.ndarray:
     """ Remove the diagonal from a square matrix
     Parameters

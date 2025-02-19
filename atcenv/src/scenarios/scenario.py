@@ -1,9 +1,9 @@
-from atcenv.src.environment_objects.airspace import Airspace
-from atcenv.src.environment_objects.flight import Flight, Aircraft
-import atcenv.src.units as u
-import atcenv.src.functions as fn
+from atcenv_gym.atcenv.src.environment_objects.airspace import Airspace
+from atcenv_gym.atcenv.src.environment_objects.flight import Flight, Aircraft
+import atcenv_gym.atcenv.src.units as u
+import atcenv_gym.atcenv.src.functions as fn
 
-from typing import Tuple, List, Optional
+from typing import Tuple, List, Optional, Union
 from dataclasses import dataclass, field
 
 import pickle
@@ -29,8 +29,8 @@ class Scenario():
         
     num_flights: int
         number of flights that should be created in each scenario
-    airspace_area: float
-        area of the airspace in NM2 
+    airspace_area: list
+        min and max area of airspace in NM2 
     traffic_density: float
         traffic density for the scenarios in AC / 100 NM2
 
@@ -89,10 +89,13 @@ class Scenario():
         
     """
     num_episodes: int
-
+    # Changed to allow specified number of agents
+    num_agents: int
     num_flights: int
-    airspace_area: float
-    traffic_density: float
+    num_ac_state: int
+    airspace_area: list
+    # Changed to allow for list of traffic density ranges, first number of list is mean and second is std dev
+    traffic_density: Union[int, list]
     
     test_scenario_dir: str
     num_test_episodes: int
@@ -101,11 +104,15 @@ class Scenario():
     random_seed: Optional[int] = 1
     save_scenarios: Optional[bool] = False
 
-    airspace_area_margin: Optional[float] = 1.25
+    airspace_area_margin: Optional[float] = 1
 
     def __post_init__(self) -> None:
         self.episode_counter = 0
         self.test_counter = 0
+        # Perserve density range if provided for update per episode
+        self.density_range = None
+        if isinstance(self.traffic_density, list):
+            self.density_range = self.traffic_density
         self.set_missing_attributes()
         self.check_num_test_episodes()
         random.seed(self.random_seed)
@@ -175,6 +182,8 @@ class Scenario():
         """
         flights_list = []
         internal_counter = 0
+        airspace = self.get_airspace(airspace)
+        self.update_num_flights(airspace)
         while len(flights_list) < self.num_flights:
             airspace = self.get_airspace(airspace)
             flights_list = self.get_flights(airspace, aircraft_type)
@@ -220,8 +229,8 @@ class Scenario():
             randomly created airspace object based on the reference airspace object
             
         """
-        min_area = self.airspace_area / self.airspace_area_margin
-        max_area = self.airspace_area * self.airspace_area_margin
+        min_area = self.airspace_area[0] * u.NM2_to_m2
+        max_area = self.airspace_area[1] * u.NM2_to_m2
         return airspace.random(min_area, max_area)
     
     def get_flights(self, airspace: Airspace, aircraft_type: Aircraft) -> List[Flight]:
@@ -248,10 +257,12 @@ class Scenario():
             
         """
         counter = 0
+        ctrl_counter = 0
         flights_list = []
         while len(flights_list) < self.num_flights:
             valid = True
             candidate = Flight.random(airspace, aircraft_type)
+            
             for f in flights_list:
                 if counter == 250:
                     return flights_list
@@ -260,6 +271,9 @@ class Scenario():
                     counter += 1
                     break
             if valid:
+                if ctrl_counter < self.num_agents:
+                    candidate.control = True
+                    ctrl_counter += 1
                 flights_list.append(candidate)
         return flights_list
 
@@ -300,17 +314,27 @@ class Scenario():
         None
             
         """
-        if self.num_flights != 0 and self.traffic_density !=0:
-            self.airspace_area = u.traffic_density_to_NM2 * (self.num_flights / self.traffic_density)
+        if isinstance(self.traffic_density, int) or self.traffic_density is None:
+            if self.num_flights != 0 and self.traffic_density !=0:
+                self.airspace_area = u.traffic_density_to_NM2 * (self.num_flights / self.traffic_density)
 
-        elif self.num_flights != 0 and self.airspace_area != 0:
-            self.traffic_density = u.traffic_density_to_NM2 * (self.num_flights / self.airspace_area)
+            elif self.num_flights != 0 and self.airspace_area != 0:
+                self.traffic_density = u.traffic_density_to_NM2 * (self.num_flights / self.airspace_area)
 
-        elif self.airspace_area != 0 and self.traffic_density != 0:
-            self.num_flights = math.ceil((self.airspace_area * self.traffic_density) / u.traffic_density_to_NM2)
+            elif self.airspace_area != 0 and self.traffic_density != 0:
+                self.num_flights = math.ceil((self.airspace_area * self.traffic_density) / u.traffic_density_to_NM2)
 
+            else:
+                raise Exception("At least 2 out of 3 attributes of num_flights, traffic_density and airspace_area must be non-zero, or give a traffic density range.")
         else:
-            raise Exception("Atleast 2 out of 3 attributes of num_flights, traffic_density and airspace_area must be non-zero")
+            # Set traffic density to random value within range (seed already set)
+            self.traffic_density = min(random.gauss(*self.density_range), 0.012)
+            if self.num_flights != 0:
+                self.airspace_area = u.traffic_density_to_NM2 * (self.num_flights / self.traffic_density)
+            elif self.airspace_area != 0:
+                self.num_flights = max(math.ceil(self.airspace_area[0] * self.traffic_density), self.num_ac_state+1)
+            else:
+                raise Exception("Traffic density range provided but no other parameters set. Please provide num_flights or airspace_area.")
         
     def check_num_test_episodes(self) -> None:
         if self.num_test_episodes != 0:
@@ -318,3 +342,16 @@ class Scenario():
             if self.num_test_episodes > count:
                 print(f"number of test episodes is higher than number of scenario's, setting num_test_episodes to {count}")
                 self.num_test_episodes = count
+    
+    def update_num_flights(self, airspace: Airspace) -> None:
+        """ update number of flights using the range of traffic density
+        
+        if the traffic density is not a range, the method will simply leave the existing
+        number of flights unchanged. If the traffic density is a range, the method will update the
+        number of flights based on a newly randomized traffic density value.
+        
+        """
+        if self.density_range is not None:
+            self.traffic_density = min(random.gauss(*self.density_range), 0.012) # Cap at 0.012 AC/100NM2
+            self.num_flights = max(math.ceil(((airspace.poly_area / u.NM2_to_m2) * self.traffic_density)), self.num_ac_state+1)
+            #print(self.num_flights)

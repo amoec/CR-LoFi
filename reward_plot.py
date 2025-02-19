@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from atcenv.src.functions import moving_average
+from atcenv_gym.atcenv.src.functions import moving_average
 
 # folder = "FeedForward_local_benchmark"
 # folder = "Transformer_relative_distance_benchmark_2"

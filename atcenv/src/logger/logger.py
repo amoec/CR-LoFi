@@ -3,9 +3,9 @@ import numpy as np
 import shutil
 import torch
 
-from atcenv.src.environment_objects.environment import Environment
-from atcenv.src.models.model import Model
-import atcenv.src.functions as fn
+from atcenv_gym.atcenv.src.environment_objects.environment import Environment
+from atcenv_gym.atcenv.src.models.model import Model
+import atcenv_gym.atcenv.src.functions as fn
 
 import matplotlib.pyplot as plt
 import matplotlib
@@ -324,13 +324,12 @@ class RLLogger(Logger):
             np.savetxt(self.results_folder+'/reward.csv', self.reward)
             np.savetxt(self.results_folder+'/conflicts.csv', self.conflicts)
             np.savetxt(self.results_folder+'/drift_angle.csv', self.drift_angle)
-            np.savetxt(self.results_folder+'/q_loss.csv', model.qf1_lossarr)
 
-            self.plot_figures(model)
+            # self.plot_figures(model)
         
         if self.log_frequency != 0 and np.mean(self.reward[-100:]) > self.best_reward:
             self.best_reward = np.mean(self.reward[-100:])
-            self.save_models(model)
+            # self.save_models(model)
         
         if self.verbose:
             print(f"Episode {self.episode} completed")
@@ -357,7 +356,7 @@ class RLLogger(Logger):
         fig.savefig(self.output_folder+'/reward.png')
         plt.close(fig)
 
-    def setup_experiment(self, experiment_name: str, config_file: str) -> str:
+    def setup_experiment(self, experiment_name: str, config_file: str, algo: str, training: float) -> str:
         """ Creates the required folder structure for saving the experiment data
 
         Raises an Exception if there already is an experiment with this name
@@ -369,6 +368,10 @@ class RLLogger(Logger):
             name of the to be conducted experiment
         config_file: str
             path to the used config file, can be obtained using sys.argvs
+        algo: str
+            name of the used algorithm
+        training: float
+            percentage of training done
         
         Returns
         __________
@@ -377,25 +380,25 @@ class RLLogger(Logger):
 
         """
         if self.log_experiment:
-            output_folder = "atcenv/output/" + experiment_name
+            output_folder = f"/scratch/amoec/ATC_RL/{experiment_name}/{algo}_{training}"
             exist = fn.check_dir_exist(output_folder, mkdir = True)
             if exist:
                 raise Exception("Experiment with this name already exists, please use a different name, or delete the previous experiment")
             else:
-                config_folder = output_folder + '/config'
-                _ = fn.check_dir_exist(config_folder, mkdir = True)
+                # config_folder = output_folder + '/config'
+                # _ = fn.check_dir_exist(config_folder, mkdir = True)
 
-                results_folder = output_folder + '/results'
+                results_folder = output_folder + '/logs'
                 _ = fn.check_dir_exist(results_folder, mkdir = True)
 
-                weights_folder = output_folder + '/weights'
-                _ = fn.check_dir_exist(weights_folder, mkdir = True)
+                # weights_folder = output_folder + '/weights'
+                # _ = fn.check_dir_exist(weights_folder, mkdir = True)
 
-                shutil.copyfile(config_file, config_folder + "/config.yaml")
+                # shutil.copyfile(config_file, config_folder + "/config.yaml")
 
             self.output_folder = output_folder
             self.results_folder = results_folder
-            self.weights_folder = weights_folder
+            # self.weights_folder = weights_folder
 
             return output_folder
 

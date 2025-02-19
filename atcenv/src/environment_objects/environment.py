@@ -6,16 +6,16 @@ import numpy as np
 import pickle
 import time
 
-from gym.envs.classic_control import rendering
+# from gym.envs.classic_control import rendering
 from shapely.geometry import LineString
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
-import atcenv.src.functions as fn
-import atcenv.src.units as u
-from atcenv.src.environment_objects.flight import Flight
-from atcenv.src.environment_objects.airspace import Airspace
+import atcenv_gym.atcenv.src.functions as fn
+import atcenv_gym.atcenv.src.units as u
+from atcenv_gym.atcenv.src.environment_objects.flight import Flight
+from atcenv_gym.atcenv.src.environment_objects.airspace import Airspace
 
 
 class Environment(ABC):
@@ -56,8 +56,8 @@ class Environment(ABC):
     def __init__(self,
                  dt: Optional[float] = 5.,
                  max_episode_len: int = 150,
-                 max_speed_change: Optional[float] = 50.,
-                 max_heading_change: Optional[float] = 25.,
+                 max_speed_change: Optional[float] = 11.3178/3,
+                 max_heading_change: Optional[float] = 22.5,
                  use_degrees: bool = True,
                  render_frequency: int = 0):
         self.dt = dt
@@ -155,53 +155,57 @@ class Environment(ABC):
 
         """
 
-        if self.viewer is None:
-            # initialise viewer
-            screen_width, screen_height = 600, 600
+        '''        if self.viewer is None:
+                    # initialise viewer
+                    screen_width, screen_height = 600, 600
 
-            minx, miny, maxx, maxy = self.airspace.polygon.buffer(10 * u.nm).bounds
-            self.viewer = rendering.Viewer(screen_width, screen_height)
-            self.viewer.set_bounds(minx, maxx, miny, maxy)
+                    minx, miny, maxx, maxy = self.airspace.polygon.buffer(10 * u.nm).bounds
+                    self.viewer = rendering.Viewer(screen_width, screen_height)
+                    self.viewer.set_bounds(minx, maxx, miny, maxy)
 
-            # fill background
-            background = rendering.make_polygon([(minx, miny),
-                                                 (minx, maxy),
-                                                 (maxx, maxy),
-                                                 (maxx, miny)],
-                                                filled=True)
-            background.set_color(0, 0, 0)
-            self.viewer.add_geom(background)
+                    # fill background
+                    background = rendering.make_polygon([(minx, miny),
+                                                        (minx, maxy),
+                                                        (maxx, maxy),
+                                                        (maxx, miny)],
+                                                        filled=True)
+                    background.set_color(0, 0, 0)
+                    self.viewer.add_geom(background)
 
-            # display airspace
-            sector = rendering.make_polygon(self.airspace.polygon.boundary.coords, filled=False)
-            sector.set_linewidth(1)
-            sector.set_color(0, 255, 0)
-            self.viewer.add_geom(sector)
+                    # display airspace
+                    sector = rendering.make_polygon(self.airspace.polygon.boundary.coords, filled=False)
+                    sector.set_linewidth(1)
+                    sector.set_color(0, 255, 0)
+                    self.viewer.add_geom(sector)
 
-        # add current positions
-        for i, f in enumerate(self.flights):
+                # add current positions
+                for i, f in enumerate(self.flights):
 
-            if i in self.conflicts:
-                color = (255, 0, 0)
-            else:
-                color = (0, 0, 255)
+                    if i in self.conflicts:
+                        color = (255, 0, 0)
+                    elif not f.control:
+                        color = (0, 0, 255)
+                        
+                    else:
+                        color = (255, 255, 255)
 
-            circle = rendering.make_circle(radius=f.aircraft.min_distance / 2.0,
-                                           res=10,
-                                           filled=False)
-            circle.add_attr(rendering.Transform(translation=(f.position.x,
-                                                             f.position.y)))
-            circle.set_color(0, 0, 255)
+                    circle = rendering.make_circle(radius=f.aircraft.min_distance / 2.0,
+                                                res=10,
+                                                filled=False)
+                    circle.add_attr(rendering.Transform(translation=(f.position.x,
+                                                                    f.position.y)))
+                    circle.set_color(0, 0, 255)
 
-            plan = LineString([f.position, f.target])
-            self.viewer.draw_polyline(plan.coords, linewidth=1, color=color)
-            prediction = LineString([f.position, f.prediction])
-            self.viewer.draw_polyline(prediction.coords, linewidth=4, color=color)
+                    plan = LineString([f.position, f.target])
+                    self.viewer.draw_polyline(plan.coords, linewidth=1, color=color)
+                    prediction = LineString([f.position, f.prediction])
+                    self.viewer.draw_polyline(prediction.coords, linewidth=4, color=color)
 
-            self.viewer.add_onetime(circle)
+                    self.viewer.add_onetime(circle)
 
-        self.viewer.render()
-        time.sleep(0.01)
+                self.viewer.render()
+                time.sleep(0.01)'''
+        pass
 
     def close(self) -> None:
         """ Closes the current render
@@ -257,7 +261,7 @@ class DefaultEnvironment(Environment):
 
     """
 
-    def step(self, action: np.ndarray, transform_action: bool) -> bool:
+    def step(self, action: np.ndarray, transform_action=True) -> bool:
         """ Progresses the environment to the next state
 
         This implementation uses direct propagation of the state
@@ -281,14 +285,14 @@ class DefaultEnvironment(Environment):
 
         action = self.transform_action(action, transform_action)
 
-        d_heading = np.clip(action[:,0], -self.max_heading_change, self.max_heading_change)
-        d_velocity = np.clip(action[:,1], -self.max_speed_change, self.max_speed_change)
+        dh = np.clip(action[0], -self.max_heading_change, self.max_heading_change)
+        dv = np.clip(action[1], -self.max_speed_change, self.max_speed_change)
         
-        for flight, dh, dv in zip(self.flights, d_heading, d_velocity):
+        for i, flight in enumerate(self.flights):
+            if flight.control:
+                flight.track = ((flight.track + dh) + u.circle) % u.circle  # Bound the new track between 0 and 2*pi
 
-            flight.track = ((flight.track + dh) + u.circle) % u.circle  # Bound the new track between 0 and 2*pi
-
-            flight.airspeed = np.clip(flight.airspeed+dv, flight.aircraft.min_speed, flight.aircraft.max_speed)
+                flight.airspeed = np.clip(flight.airspeed+dv, flight.aircraft.min_speed, flight.aircraft.max_speed)
 
             vx, vy = flight.components
             position = flight.position
@@ -312,8 +316,8 @@ class DefaultEnvironment(Environment):
     def transform_action(self, action: np.ndarray, transform_action: bool) -> np.ndarray:
 
         if transform_action:
-            action[:,0] *= self.max_heading_change
-            action[:,1] *= self.max_speed_change
+            action[0] *= self.max_heading_change
+            action[1] *= self.max_speed_change
         return action
 
 

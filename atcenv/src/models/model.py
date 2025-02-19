@@ -8,8 +8,8 @@ import pickle
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
-import atcenv.src.functions as fn
-from atcenv.src.environment_objects.flight import Flight
+import atcenv_gym.atcenv.src.functions as fn
+from atcenv_gym.atcenv.src.environment_objects.flight import Flight
 
 class SubModel():
     

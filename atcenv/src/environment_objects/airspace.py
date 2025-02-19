@@ -6,7 +6,7 @@ import random
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
-import atcenv.src.functions as fn
+import atcenv_gym.atcenv.src.functions as fn
 
 @dataclass
 class Airspace(ABC):
@@ -136,8 +136,12 @@ class EnrouteAirspace(Airspace):
         while polygon.area < min_area:
             p.append(fn.random_point_in_circle(R))
             polygon = Polygon(p).convex_hull
+        
+        instance = cls(polygon = polygon, category = "enroute")
+        
+        instance.poly_area = polygon.area
 
-        return cls(polygon = polygon, category = "enroute")
+        return instance
     
     def random_flight(self, min_speed: float, max_speed: float, tol: float = 0) -> Tuple[Point,Point,float,str]:
         flight_type = "enroute"
@@ -194,6 +198,7 @@ class MixedAirspace(Airspace):
     def random_flight(self, min_speed: float, max_speed: float, tol: float = 0) -> Tuple[Point,Point,float,str]:
         position = fn.random_point_in_polygon(self.polygon)
         boundary = self.polygon.boundary
+        
 
         while True:
             d = random.uniform(0, self.polygon.boundary.length)
