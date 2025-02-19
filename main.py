@@ -269,9 +269,14 @@ def main(experiment_name: str,
     # Initialize EarlyStopping callback
     early_stopping = TimestepStoppingCallback(target=pre_training, verbose=1)
     callback_list = CallbackList([early_stopping, csv_logger])
+    
+    # Set network architecture
+    policy_kwargs = dict(
+        net_arch=[256, 256] # Default architecture used for all algorithms
+    )
 
     # Create the RL model (default hyperparams):
-    model_instance = AlgoClass(policy_type, env)
+    model_instance = AlgoClass(policy_type, env, policy_kwargs=policy_kwargs)
 
     # If user wants training:
     if train:
