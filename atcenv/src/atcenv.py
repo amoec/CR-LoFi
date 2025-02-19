@@ -1,9 +1,9 @@
-from atcenv_gym.atcenv.src.environment_objects.airspace import Airspace
-from atcenv_gym.atcenv.src.environment_objects.flight import Aircraft, Flight
-from atcenv_gym.atcenv.src.environment_objects.environment import Environment
-from atcenv_gym.atcenv.src.observation.observation import Observation
-from atcenv_gym.atcenv.src.reward.reward import Reward
-from atcenv_gym.atcenv.src.scenarios.scenario import Scenario
+from CR_LoFi.atcenv.src.environment_objects.airspace import Airspace
+from CR_LoFi.atcenv.src.environment_objects.flight import Aircraft, Flight
+from CR_LoFi.atcenv.src.environment_objects.environment import Environment
+from CR_LoFi.atcenv.src.observation.observation import Observation
+from CR_LoFi.atcenv.src.reward.reward import Reward
+from CR_LoFi.atcenv.src.scenarios.scenario import Scenario
 
 import gymnasium as gym
 from gymnasium import spaces

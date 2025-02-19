@@ -3,9 +3,9 @@ from dataclasses import dataclass, field
 from typing import Tuple, Optional
 import math
 
-import atcenv_gym.atcenv.src.units as u
-import atcenv_gym.atcenv.src.functions as fn
-from atcenv_gym.atcenv.src.environment_objects.airspace import Airspace
+import CR_LoFi.atcenv.src.units as u
+import CR_LoFi.atcenv.src.functions as fn
+from CR_LoFi.atcenv.src.environment_objects.airspace import Airspace
 
 @dataclass
 class Aircraft:

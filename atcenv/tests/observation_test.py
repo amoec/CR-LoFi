@@ -1,7 +1,7 @@
-from atcenv_gym.atcenv.src.environment_objects.observation.observation import Local
-from atcenv_gym.atcenv.src.environment_objects.airspace import EnrouteAirspace
-from atcenv_gym.atcenv.src.environment_objects.flight import Aircraft
-from atcenv_gym.atcenv.src.environment_objects.flight import Flight
+from CR_LoFi.atcenv.src.environment_objects.observation.observation import Local
+from CR_LoFi.atcenv.src.environment_objects.airspace import EnrouteAirspace
+from CR_LoFi.atcenv.src.environment_objects.flight import Aircraft
+from CR_LoFi.atcenv.src.environment_objects.flight import Flight
 
 num_ac = 2
 

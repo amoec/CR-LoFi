@@ -12,14 +12,14 @@ from stable_baselines3 import SAC, TD3, DDPG, PPO, A2C, DQN
 from stable_baselines3.common.callbacks import BaseCallback, CallbackList
 from stable_baselines3.common.off_policy_algorithm import OffPolicyAlgorithm
 
-from atcenv_gym.atcenv.src.atcenv import AtcEnv
-from atcenv_gym.atcenv.src.environment_objects.airspace import Airspace
-from atcenv_gym.atcenv.src.environment_objects.flight import Aircraft, Flight
-from atcenv_gym.atcenv.src.environment_objects.environment import Environment
-from atcenv_gym.atcenv.src.observation.observation import Observation
-from atcenv_gym.atcenv.src.reward.reward import Reward
-from atcenv_gym.atcenv.src.scenarios.scenario import Scenario
-import atcenv_gym.atcenv.src.functions as fn
+from CR_LoFi.atcenv.src.atcenv import AtcEnv
+from CR_LoFi.atcenv.src.environment_objects.airspace import Airspace
+from CR_LoFi.atcenv.src.environment_objects.flight import Aircraft, Flight
+from CR_LoFi.atcenv.src.environment_objects.environment import Environment
+from CR_LoFi.atcenv.src.observation.observation import Observation
+from CR_LoFi.atcenv.src.reward.reward import Reward
+from CR_LoFi.atcenv.src.scenarios.scenario import Scenario
+import CR_LoFi.atcenv.src.functions as fn
 
 
 # Dictionary of all stable-baselines3 algorithms you want to support:

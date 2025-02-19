@@ -5,7 +5,7 @@ from torch.distributions import Normal
 
 from abc import ABC, abstractmethod
 
-import atcenv_gym.atcenv.src.models.transformer as transformer
+import CR_LoFi.atcenv.src.models.transformer as transformer
 
 def init_layer_uniform(layer: nn.Linear, init_w: float = 3e-3) -> nn.Linear:
     layer.weight.data.uniform_(-init_w, init_w)

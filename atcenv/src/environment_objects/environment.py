@@ -12,10 +12,10 @@ from shapely.geometry import LineString
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
-import atcenv_gym.atcenv.src.functions as fn
-import atcenv_gym.atcenv.src.units as u
-from atcenv_gym.atcenv.src.environment_objects.flight import Flight
-from atcenv_gym.atcenv.src.environment_objects.airspace import Airspace
+import CR_LoFi.atcenv.src.functions as fn
+import CR_LoFi.atcenv.src.units as u
+from CR_LoFi.atcenv.src.environment_objects.flight import Flight
+from CR_LoFi.atcenv.src.environment_objects.airspace import Airspace
 
 
 class Environment(ABC):

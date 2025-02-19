@@ -1,7 +1,7 @@
-from atcenv_gym.atcenv.src.environment_objects.airspace import Airspace
-from atcenv_gym.atcenv.src.environment_objects.flight import Flight, Aircraft
-import atcenv_gym.atcenv.src.units as u
-import atcenv_gym.atcenv.src.functions as fn
+from CR_LoFi.atcenv.src.environment_objects.airspace import Airspace
+from CR_LoFi.atcenv.src.environment_objects.flight import Flight, Aircraft
+import CR_LoFi.atcenv.src.units as u
+import CR_LoFi.atcenv.src.functions as fn
 
 from typing import Tuple, List, Optional, Union
 from dataclasses import dataclass, field

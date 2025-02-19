@@ -3,9 +3,9 @@ import numpy as np
 import shutil
 import torch
 
-from atcenv_gym.atcenv.src.environment_objects.environment import Environment
-from atcenv_gym.atcenv.src.models.model import Model
-import atcenv_gym.atcenv.src.functions as fn
+from CR_LoFi.atcenv.src.environment_objects.environment import Environment
+from CR_LoFi.atcenv.src.models.model import Model
+import CR_LoFi.atcenv.src.functions as fn
 
 import matplotlib.pyplot as plt
 import matplotlib

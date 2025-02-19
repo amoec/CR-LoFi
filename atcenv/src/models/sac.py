@@ -8,14 +8,14 @@ import numpy as np
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
-import atcenv_gym.atcenv.src.functions as fn
-from atcenv_gym.atcenv.src.environment_objects.flight import Flight
+import CR_LoFi.atcenv.src.functions as fn
+from CR_LoFi.atcenv.src.environment_objects.flight import Flight
 
-from atcenv_gym.atcenv.src.models.model import Model
-from atcenv_gym.atcenv.src.models.actor import Actor
-from atcenv_gym.atcenv.src.models.critic_q import Critic_Q
-from atcenv_gym.atcenv.src.models.critic_v import Critic_V
-from atcenv_gym.atcenv.src.models.replay_buffer import ReplayBuffer
+from CR_LoFi.atcenv.src.models.model import Model
+from CR_LoFi.atcenv.src.models.actor import Actor
+from CR_LoFi.atcenv.src.models.critic_q import Critic_Q
+from CR_LoFi.atcenv.src.models.critic_v import Critic_V
+from CR_LoFi.atcenv.src.models.replay_buffer import ReplayBuffer
 
 import time
 

@@ -6,7 +6,7 @@ import random
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
-import atcenv_gym.atcenv.src.functions as fn
+import CR_LoFi.atcenv.src.functions as fn
 
 @dataclass
 class Airspace(ABC):
