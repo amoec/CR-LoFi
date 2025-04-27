@@ -1,10 +1,10 @@
 experiment_name: "LOFI-SAC-100"
 environment:
-  class_path: atcenv_gym.atcenv.src.environment_objects.environment.DefaultEnvironment
+  class_path: CR_LoFi.atcenv.src.environment_objects.environment.DefaultEnvironment
   init_args:
     render_frequency: 0
 model:
-  class_path: atcenv_gym.atcenv.src.models.sac.SAC
+  class_path: CR_LoFi.atcenv.src.models.sac.SAC
   init_args:
     action_dim: 2
     alpha_lr: 3e-4
@@ -16,7 +16,7 @@ model:
     policy_update_freq: 8
     initial_random_steps: 0
     buffer:
-      class_path: atcenv_gym.atcenv.src.models.replay_buffer.ReplayBuffer
+      class_path: CR_LoFi.atcenv.src.models.replay_buffer.ReplayBuffer
       init_args:
         obs_dim: 31
         action_dim: 2
@@ -24,26 +24,26 @@ model:
         size: 20000000
         batch_size: 2048
     actor:
-      class_path: atcenv_gym.atcenv.src.models.actor.FeedForwardActor
+      class_path: CR_LoFi.atcenv.src.models.actor.FeedForwardActor
       init_args:
         in_dim: 31
         out_dim: 2
     critic_q_1:
-      class_path: atcenv_gym.atcenv.src.models.critic_q.FeedForward_Q
+      class_path: CR_LoFi.atcenv.src.models.critic_q.FeedForward_Q
       init_args:
         state_dim: 31
         action_dim: 2
     critic_q_2:
-      class_path: atcenv_gym.atcenv.src.models.critic_q.FeedForward_Q
+      class_path: CR_LoFi.atcenv.src.models.critic_q.FeedForward_Q
       init_args:
         state_dim: 31
         action_dim: 2
     critic_v:
-      class_path: atcenv_gym.atcenv.src.models.critic_v.FeedForward_V
+      class_path: CR_LoFi.atcenv.src.models.critic_v.FeedForward_V
       init_args:
         in_dim: 31
     critic_v_target:
-      class_path: atcenv_gym.atcenv.src.models.critic_v.FeedForward_V
+      class_path: CR_LoFi.atcenv.src.models.critic_v.FeedForward_V
       init_args:
         in_dim: 31
 scenario:
@@ -57,13 +57,13 @@ scenario:
   num_test_episodes: 0
   test_frequency: 0
 airspace:
-  class_path: atcenv_gym.atcenv.src.environment_objects.airspace.EnrouteAirspace
+  class_path: CR_LoFi.atcenv.src.environment_objects.airspace.EnrouteAirspace
 aircraft:
   min_speed: 200
   max_speed: 250
   min_distance: 9260
 observation:
-  class_path: atcenv_gym.atcenv.src.observation.observation.Local
+  class_path: CR_LoFi.atcenv.src.observation.observation.Local
   init_args:
     observation_size: 31
     num_ac_state: 4
@@ -72,12 +72,12 @@ observation:
     normalization_data_file: "local_normalization.p"
     normalization_samples: 1000
 reward:
-  class_path: atcenv_gym.atcenv.src.reward.reward.DefaultReward
+  class_path: CR_LoFi.atcenv.src.reward.reward.DefaultReward
   init_args:
     intrusion_weight: -1
     drift_weight: -0.1
 logger:
-  class_path: atcenv_gym.atcenv.src.logger.logger.RLLogger
+  class_path: CR_LoFi.atcenv.src.logger.logger.RLLogger
   init_args:
     log_frequency: 25
     verbose: True

@@ -145,11 +145,11 @@ class Observation(ABC):
                 print('Setting create_normalization_data to False')
                 self.create_normalization_data = False
 
-            exist = fn.check_dir_exist(f'atcenv_gym/atcenv/src/observation/normalization_data/{self.normalization_data_file}', False)
+            exist = fn.check_dir_exist(f'CR_LoFi/atcenv/src/observation/normalization_data/{self.normalization_data_file}', False)
             if not exist:
                 raise Exception('No normalization data found, please run a create normalization data scenario first')
             else:
-                with open(f'atcenv_gym/atcenv/src/observation/normalization_data/{self.normalization_data_file}', 'rb') as handle:
+                with open(f'CR_LoFi/atcenv/src/observation/normalization_data/{self.normalization_data_file}', 'rb') as handle:
                     self.means, self.stds = pickle.load(handle)
 
                     print('means: ', self.means)

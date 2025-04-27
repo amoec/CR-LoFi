@@ -1,6 +1,6 @@
 experiment_name: "BASELINE-ZERO-ACTION"
 environment:
-  class_path: atcenv_gym.atcenv.src.environment_objects.environment.DefaultEnvironment
+  class_path: CR_LoFi.atcenv.src.environment_objects.environment.DefaultEnvironment
   init_args:
     render_frequency: 0
 model: {}
@@ -16,13 +16,13 @@ scenario:
   test_frequency: 0
   random_seed: 42
 airspace:
-  class_path: atcenv_gym.atcenv.src.environment_objects.airspace.EnrouteAirspace
+  class_path: CR_LoFi.atcenv.src.environment_objects.airspace.EnrouteAirspace
 aircraft:
   min_speed: 250
   max_speed: 250
   min_distance: 9260
 observation:
-  class_path: atcenv_gym.atcenv.src.observation.observation.Local
+  class_path: CR_LoFi.atcenv.src.observation.observation.Local
   init_args:
     observation_size: 31
     num_ac_state: 4
@@ -31,12 +31,12 @@ observation:
     normalization_data_file: "local_normalization.p"
     normalization_samples: 1000
 reward:
-  class_path: atcenv_gym.atcenv.src.reward.reward.DefaultReward
+  class_path: CR_LoFi.atcenv.src.reward.reward.DefaultReward
   init_args:
     intrusion_weight: -1
     drift_weight: -0.1
 logger:
-  class_path: atcenv_gym.atcenv.src.logger.logger.RLLogger
+  class_path: CR_LoFi.atcenv.src.logger.logger.RLLogger
   init_args:
     log_frequency: 25
     verbose: True
