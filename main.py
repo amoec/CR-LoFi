@@ -105,7 +105,7 @@ def main(experiment_name: str,
     
     if restart and os.path.exists(model_path):
         print(f"Restarting training from checkpoint: {model_path}")
-        model_instance = AlgoClass.load(model_path, env=env)
+        model_instance = AlgoClass.load(model_path, env=env, device="cuda")
         
         # If it's an off-policy algorithm, try to load the replay buffer
         if issubclass(AlgoClass, OffPolicyAlgorithm):
@@ -115,7 +115,7 @@ def main(experiment_name: str,
                 print(f"Loaded replay buffer from: {rb_path}")
     else:
         # Create a new model instance
-        model_instance = AlgoClass(policy_type, env, policy_kwargs=policy_kwargs)
+        model_instance = AlgoClass(policy_type, env, policy_kwargs=policy_kwargs, device="cuda")
 
     # If user wants training:
     if train:
